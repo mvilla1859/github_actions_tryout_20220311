@@ -65,6 +65,7 @@ jobs:
         git config user.name "Automated"  
         git config user.email "actions@users.noreply.github.com"  
         git commit -m "Latest data"   
+        git push
 
-    - name: Push  
-      run: git push
+    # - name: Push  
+    #   run: git push
