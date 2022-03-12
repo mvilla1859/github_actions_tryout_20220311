@@ -36,7 +36,7 @@ jobs:
       env:
           INCOMING_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       with:
-          text: A successful scrape!
+          text: 動いておるなんて信じ難いこと。
           # attachments: |
           # [
           #   {
