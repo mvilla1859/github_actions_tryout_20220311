@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+
     - name: Install pipenv
       run: pipx install pipenv
     - uses: actions/setup-python@v2
@@ -17,8 +18,10 @@ jobs:
         python-version: '3.9'
         cache: 'pipenv'
     - run: pipenv install --python `which python`
+
     - name: Run scraper
       run: pipenv run jupyter execute scrape.ipynb
+
     - name: Add and commit  
       id: add_commit
       uses: EndBug/add-and-commit@v8
@@ -34,21 +37,21 @@ jobs:
           INCOMING_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       with:
           text: A successful scrape!
-          attachments: |
-          [
-              {
-              "color": "good",
-              "author_name": "${{ github.actor }}",
-              "author_icon": "${{ github.event.sender.avatar_url }}",
-              "fields": [
-                  {
-                  "title": "GitHub Actions URL",
-                  "value": "https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}"
-                  },
-                  {
-                  "title": "Commit URL",
-                  "value": "https://github.com/${{github.repository}}/commits"
-                  }
-              ]
-              }
-          ] 
+          # attachments: |
+          # [
+          #     {
+          #     "color": "good",
+          #     "author_name": "${{ github.actor }}",
+          #     "author_icon": "${{ github.event.sender.avatar_url }}",
+          #     "fields": [
+          #         {
+          #         "title": "GitHub Actions URL",
+          #         "value": "https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}"
+          #         },
+          #         {
+          #         "title": "Commit URL",
+          #         "value": "https://github.com/${{github.repository}}/commits"
+          #         }
+          #     ]
+          #     }
+          # ] 
