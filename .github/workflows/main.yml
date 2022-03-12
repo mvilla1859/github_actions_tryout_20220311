@@ -1,40 +1,3 @@
-# # This is a basic workflow to help you get started with Actions
-
-# name: CI
-
-# # Controls when the workflow will run
-# on:
-#   # Triggers the workflow on push or pull request events but only for the main branch
-#   push:
-#     branches: [ main ]
-#   pull_request:
-#     branches: [ main ]
-
-#   # Allows you to run this workflow manually from the Actions tab
-#   workflow_dispatch:
-
-# # A workflow run is made up of one or more jobs that can run sequentially or in parallel
-# jobs:
-#   # This workflow contains a single job called "build"
-#   build:
-#     # The type of runner that the job will run on
-#     runs-on: ubuntu-latest
-
-#     # Steps represent a sequence of tasks that will be executed as part of the job
-#     steps:
-#       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-#       - uses: actions/checkout@v2
-
-#       # Runs a single command using the runners shell
-#       - name: Run a one-line script
-#         run: echo Hello, world!
-
-#       # Runs a set of commands using the runners shell
-#       - name: Run a multi-line script
-#         run: |
-#           echo Add other actions to build,
-#           echo test, and deploy your project.
-
 name: Scrape
 
 on:
@@ -47,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-
     - name: Install pipenv
       run: pipx install pipenv
     - uses: actions/setup-python@v2
@@ -55,82 +17,12 @@ jobs:
         python-version: '3.9'
         cache: 'pipenv'
     - run: pipenv install --python `which python`
-
     - name: Run scraper
       run: pipenv run jupyter execute scrape.ipynb
-
-    # - name: Add and commit  
-    #   run: |- 
-    #     git add . 
-    #     git config user.name "Automated"  
-    #     git config user.email "actions@users.noreply.github.com"  
-    #     git commit -m "Latest data"   
-    #     git push
-    - name: Add and commit
+    - name: Add and commit  
       id: add_commit
       uses: EndBug/add-and-commit@v8
       with:
         committer_name: Automated
         committer_email: actions@users.noreply.github.com
         message: "Latest data"
-
-
-    - name: Slack Notification on SUCCESS
-          # if: success()
-          if: (success() && steps.add_commit.outputs.committed=='true')
-
-          uses: tokorom/action-slack-incoming-webhook@main
-          env:
-              INCOMING_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          with:
-              text: A successful scrape!
-              attachments: |
-              [
-                  {
-                  "color": "good",
-                  "author_name": "${{ github.actor }}",
-                  "author_icon": "${{ github.event.sender.avatar_url }}",
-                  "fields": [
-                      {
-                      "title": "GitHub Actions URL",
-                      "value": "https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}"
-                      },
-                      {
-                      "title": "Commit URL",
-                      "value": "https://github.com/${{github.repository}}/commits"
-                      }
-                  ]
-                  }
-              ] 
-
-
-    # - name: Slack Notification on FAILURE
-    #   if: failure()
-    #   uses: tokorom/action-slack-incoming-webhook@main
-    #   env:
-    #       INCOMING_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-    #   with:
-    #       text: Something went wrong.
-    #       attachments: |
-    #       [
-    #           {
-    #           "color": "bad",
-    #           "author_name": "${{ github.actor }}",
-    #           "author_icon": "${{ github.event.sender.avatar_url }}",
-    #           "fields": [
-    #               {
-    #               "title": "GitHub Actions URL",
-    #               "value": "https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}"
-    #               }
-    #           ]
-    #           }
-    #       ] 
-
-    # - name: Slack Notification on no new commits
-    #   if: (success() && steps.add_commit.outputs.committed=='false')
-    #   uses: tokorom/action-slack-incoming-webhook@main
-    #   env:
-    #     INCOMING_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-    #   with:
-    #     text: Nothing was committed
-
